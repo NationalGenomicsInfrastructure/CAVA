@@ -3,7 +3,7 @@
 
 CAVA is a program devekoped for rapid and robust estimation of allele frequencies of specific SNPs or mutations in long-read amplicon sequencing data. It also provides an efficient tool to resolve haplotypes by SNP phasing and to determine clonal distribution of mutations. CAVA was specifically developed for data produced by PacBio instruments but it can be applied to any type of sequencing data. 
 
-Check out Wiki to learn how to run CAVA - [Wiki](https://github.com/UppsalaGenomeCenter/InSiDeR/wiki)
+Check out Wiki to learn how to run CAVA - [Wiki](https://github.com/NationalGenomicsInfrastructure/CAVA/wiki)
 
 Copyright (C) 2015 Adam Ameur
 
