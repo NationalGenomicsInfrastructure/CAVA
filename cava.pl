@@ -58,7 +58,7 @@ my %seen_substrings;  # Hash with number of mismatches in substrings of same len
 my %unmatched_reads;  # Hash with all reads that do not contain any match to pattern
 
 # Read command line arguments
-my ($ccs_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent) = get_args_and_error_check();
+my ($in_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent) = get_args_and_error_check();
 
 # Execute mutation matching
 cava();
@@ -74,10 +74,10 @@ cava();
 sub cava{
 
 	unless($silent){
-		print STDOUT "\n######### Screening of $mutation in file: $ccs_file  #########\n\n";
+		print STDOUT "\n######### Screening of $mutation in file: $in_file  #########\n\n";
 	}
 
-	my %reads=read_fasta_file($ccs_file); # Read sequence data from FASTA file
+	my %reads=read_fasta_file($in_file); # Read sequence data from FASTA file
 	my %updated_reads=%reads; # Hash to keep track of reads that remain to be screened
 
 	my $seq_up = "undefined";
@@ -325,9 +325,9 @@ sub read_fasta_file{
 	my %id2seq = ();
 	my $id = '';
 
-	open(CCS_FILE, "<", $fasta_file) or die "cannot open: $!";
+	open(IN_FILE, "<", $fasta_file) or die "cannot open: $!";
 
-	while(<CCS_FILE>){
+	while(<IN_FILE>){
 		chomp;
 		if($_ =~ /^>(.+)/){
 			$id = $1;
@@ -337,7 +337,7 @@ sub read_fasta_file{
 		}
 	}
 
-	close(CCS_FILE);
+	close(IN_FILE);
 
 	return(%id2seq);
 }
@@ -417,11 +417,11 @@ sub get_args_and_error_check{
 
 	if (@ARGV == 0) {pod2usage(-exitval => 2, -verbose => 0);}
 
-	my ($ccs_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent);
+	my ($in_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent);
 
 	my $result = GetOptions("--help"           => sub{local *_=\$_[1];
 							                      pod2usage(-exitval =>2, -verbose => 1)},
-		                    "-ccs=s"             =>\$ccs_file,
+		                    "-f=s"             =>\$in_file,
 							"-m=s"               =>\$mutation,
 							"-max_mm=i"          =>\$max_mismatch,
 							"-d!"                =>\$output_read_ids,
@@ -430,8 +430,8 @@ sub get_args_and_error_check{
 
 	my $error_to_print;
 
-	unless(defined($ccs_file)) {
-		$error_to_print .= "\tNo ccs file specified.\n";
+	unless(defined($in_file)) {
+		$error_to_print .= "\tNo input FASTA file specified.\n";
 	}
 
     unless(defined($mutation)) {
@@ -453,7 +453,7 @@ sub get_args_and_error_check{
 	}
 
 	else{
-		return ($ccs_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent);
+		return ($in_file, $mutation, $max_mismatch, $output_read_ids, $hash_off, $silent);
 	}
 }
 
@@ -467,7 +467,7 @@ cava.pl
 
 =head1 SYNOPSIS
 
-./cava.pl [options] B<--help> B<-ccs> B<-m> B<-max_mm> B<-d> B<-h_off> B<--silent>
+./cava.pl [options] B<--help> B<-f> B<-m> B<-max_mm> B<-d> B<-h_off> B<--silent>
 
 =head1 OPTIONS
 
@@ -475,13 +475,13 @@ cava.pl
 
 =item [REQUIRED]
 
-=item B<-ccs>
+=item B<-f>
 
-CCS read input file (FASTA format).
+FASTA formatted file containing reads.
 
 =item B<-m>
 
-A mutation string to use for screening FASTA file.
+Mutation string to use for screening FASTA file.
 
 =item [OPTIONAL]
 
